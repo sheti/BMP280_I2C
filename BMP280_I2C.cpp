@@ -9,10 +9,63 @@ bool BMP280_I2C::init() {
 		return false;
 
 	readCalibrationData();
-	write8(BMP280_REGISTER_CONTROL, 0x3F);
+	write8(BMP280_REGISTER_CTRL_MEAS, 0x3F);
 	return true;
 }
-
+/*!
+ *	@brief This API used to Read the
+ *	standby duration time from the sensor
+ *	in the register 0xF5 bit 5 to 7
+ *	@note Normal mode comprises an
+ *	automated perpetual cycling between an (active)
+ *	Measurement period and an (inactive) standby period.
+ *	@note The standby time is determined
+ *	by the contents of the register t_sb.
+ *	Standby time can be set using BMP280_STANDBYTIME_125_MS.
+ *
+ *	@note setStandbyTime(BMP280_STANDBYTIME_125_MS)
+ *
+ *
+ *
+ *	@param v_standby_durn_u8 : The standby duration time value.
+ *  value     |  standby duration
+ * -----------|--------------------
+ *    0x00    | BMP280_STANDBYTIME_1_MS
+ *    0x01    | BMP280_STANDBYTIME_63_MS
+ *    0x02    | BMP280_STANDBYTIME_125_MS
+ *    0x03    | BMP280_STANDBYTIME_250_MS
+ *    0x04    | BMP280_STANDBYTIME_500_MS
+ *    0x05    | BMP280_STANDBYTIME_1000_MS
+ *    0x06    | BMP280_STANDBYTIME_2000_MS
+ *    0x07    | BMP280_STANDBYTIME_4000_MS
+ *
+ *
+ */
+void BMP280_I2C::setStandbyTime(uint8_t v_standby_durn_u8) {
+	uint8_t config = (uint8_t)read8(BMP280_REGISTER_CONFIG);
+	write8(BMP280_REGISTER_CONFIG, (config & 0x1F) | (v_standby_durn_u8 << 5));
+}
+/*!
+ *	@brief This API is used to write filter setting
+ *	in the register 0xF5 bit 3 and 4
+ *
+ *
+ *
+ *	@param v_value_u8 : The value of filter coefficient
+ *	value	    |	Filter coefficient
+ * -------------|-------------------------
+ *	0x00        | BMP280_FILTER_COEFF_OFF
+ *	0x01        | BMP280_FILTER_COEFF_2
+ *	0x02        | BMP280_FILTER_COEFF_4
+ *	0x03        | BMP280_FILTER_COEFF_8
+ *	0x04        | BMP280_FILTER_COEFF_16
+ *
+ *
+ */
+void BMP280_I2C::setFilter(uint8_t v_value_u8) {
+	uint8_t config = (uint8_t)read8(BMP280_REGISTER_CONFIG);
+	write8(BMP280_REGISTER_CONFIG, (config & 0xE3) | (v_value_u8 << 2));
+}
 // Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC. 
 // t_fine carries fine temperature as global value
 int32_t BMP280_I2C::getTemperature() {
