@@ -16,8 +16,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  long Pressure = dps.getPressure();
-  long Temperature = dps.temperature;
+  int32_t Pressure = dps.getPressure();
+  int32_t Temperature = dps.temperature;
   Serial.print("Pressure(mmHg):");
   Serial.println(Pressure/(256 * 133.32));   //Выводим давление в мм.рт ст
   Serial.print("Temp:");
